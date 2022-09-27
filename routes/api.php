@@ -14,8 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['middleware' => ['checkAuth']], function () {
-    Route::get('/users', function (){
+Route::group(['prefix' => '/api.v.2/recruiter', 'middleware' => ['checkAuth']], function () {
+    Route::get('recruiters', 'App\Http\Controllers\Api\Recruiter\Sample@index')->name('recruiters');
+});
+
+Route::group(['prefix' => '/api.v.1/user', 'middleware' => ['checkAuth']], function () {
+    Route::get('users', function (){
         dd(\App\Models\User::all());
     })->name('users');
 });

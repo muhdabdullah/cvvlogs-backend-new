@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::group(['prefix' => '/api.v.1/admin', 'middleware' => ['checkAuth']], function () {
+    Route::post('get-job-list', 'App\Http\Controllers\Api\Admin\DashboardController@getAllJobs')
+        ->name('admin.getAllJobs');
+});
+
 Route::group(['prefix' => '/api.v.2/recruiter', 'middleware' => ['checkAuth']], function () {
     Route::get('recruiters', 'App\Http\Controllers\Api\Recruiter\Sample@index')->name('recruiters');
 });

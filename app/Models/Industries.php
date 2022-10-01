@@ -4,9 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class userSession extends Model
+class Industries extends Model
 {
     use HasFactory;
-    protected $table = 'user_session';
+    protected $table = 'allindustries';
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\AdminSession;
 use App\Models\recruiterSession;
 use App\Models\userSession;
 use Closure;
@@ -25,19 +26,19 @@ class CheckAuth extends BaseMiddleware
         $segment = $request->segment(3);
         $status = 0;
         if ($segment == 'recruiter')
-        {
-            $status = recruiterSession::select('status')->where('token', $authId)->first()?->status;
-        }
+            $status = RecruiterSession::select('status')->where('token', $authId)->first()?->status;
+
         if ($segment == 'user')
-        {
-            $status = userSession::select('status')->where('token', $authId)->first()?->status;
-        }
+            $status = UserSession::select('status')->where('token', $authId)->first()?->status;
+
+        if ($segment == 'admin')
+            $status = AdminSession::select('status')->where('token', $authId)->first()?->status;
 
         if (!$status) {
             $code = Response::HTTP_UNAUTHORIZED;
             $output = [
                 'status' => false,
-                'message' => 'Unknown Route name.',
+                'message' => 'UnAuthenticated Request',
                 'code' => $code
             ];
             return response()->json($output, $code);

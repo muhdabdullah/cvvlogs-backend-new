@@ -3,6 +3,10 @@
 namespace App\Repositories;
 
 use App\Models\Job;
+use App\Models\ProfileUpdate;
+use App\Models\Recruiter;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Validator\Exceptions\ValidatorException as ValidatorExceptionAlias;
 
@@ -34,5 +38,50 @@ class JobRepository extends BaseRepository
                 'city:id,name',
                 'recruiter.company.industry:id,name'
             ])->withCount('applications As total_applicants')->paginate(15);
+    }
+
+    /**
+     * @param $request
+     * @return array
+     */
+    public function getStats($request): array
+    {
+        $total_users = $total_verified_users = $total_ios_users = $total_android_users =  $total_web_users =
+        $total_recruiter = $total_verified_recruiter = $total_ios_recruiter = $total_android_recruiter =
+        $total_web_recruiter = $total_complete_profiles = 0;
+
+        $total_users = User::selectRaw('count(id) As total_users')->first()->total_users;
+        $total_verified_users = User::selectRaw('count(id) As total_verified_users')->where('verified', 1)->first()
+            ->total_verified_users;
+
+        $total_recruiter = Recruiter::selectRaw('count(id) As total_recruiter')->first()->total_recruiter;
+        $total_verified_recruiter = Recruiter::selectRaw('count(id) As total_verified_recruiter')->where('verified', 1)->first()
+            ->total_verified_recruiter;
+
+        $total_complete_profiles = ProfileUpdate::selectRaw('count(user.id) As total_complete_profiles')
+            ->join('user', 'user.id', 'profile_updates.user_id')
+            ->where([
+                'profile_updates.headline' => 1,
+                'profile_updates.proffessional' => 1,
+                'profile_updates.profile' => 1,
+                'profile_updates.qualification' => 1,
+                'profile_updates.video' => 1,
+                'user.verified' => 1,
+            ])
+            ->first()->total_complete_profiles;
+
+        return [
+            'total_users'              => $total_users,
+            'total_verified_users'     => $total_verified_users,
+            'total_complete_profiles'  => $total_complete_profiles,
+            'total_recruiter'          => $total_recruiter,
+            'total_verified_recruiter' => $total_verified_recruiter,
+            'total_ios_users'          => $total_ios_users,
+            'total_android_users'      => $total_android_users,
+            'total_web_users'          => $total_web_users,
+            'total_ios_recruiter'      => $total_ios_recruiter,
+            'total_android_recruiter'  => $total_android_recruiter,
+            'total_web_recruiter'      => $total_web_recruiter,
+        ];
     }
 }

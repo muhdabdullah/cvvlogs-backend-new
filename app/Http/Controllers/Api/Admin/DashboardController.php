@@ -36,4 +36,14 @@ class DashboardController extends BaseApiController
         $data = $this->jobRepository->getAllJobs($request->only(['admin_status']));
         return $this->sendResponse($data, __('response.success'));
     }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getStats(Request $request): JsonResponse
+    {
+        $data = $this->jobRepository->getStats($request->only(['admin_status']));
+        return $this->sendResponse($data, __('response.success'));
+    }
 }

@@ -2,11 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\AdminSession;
 use App\Models\recruiterSession;
 use App\Models\userSession;
-use Closure;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse as JsonResponseAlias;
 use Illuminate\Http\Response as ResponseAlias;
 use Laravel\Passport\Http\Middleware\CheckForAnyScope as BaseMiddleware;
@@ -30,9 +27,6 @@ class CheckAuth extends BaseMiddleware
 
         if ($segment == 'user')
             $status = UserSession::select('status')->where('token', $authId)->first()?->status;
-
-        if ($segment == 'admin')
-            $status = AdminSession::select('status')->where('token', $authId)->first()?->status;
 
         if (!$status) {
             $code = Response::HTTP_UNAUTHORIZED;

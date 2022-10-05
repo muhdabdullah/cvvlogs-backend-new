@@ -42,10 +42,9 @@ class JobRepository extends BaseRepository
     }
 
     /**
-     * @param $request
      * @return array
      */
-    public function getStats($request): array
+    public function getStats(): array
     {
         $total_users = $total_verified_users = $total_ios_users = $total_android_users =  $total_web_users =
         $total_recruiter = $total_verified_recruiter = $total_ios_recruiter = $total_android_recruiter =
@@ -114,5 +113,20 @@ class JobRepository extends BaseRepository
             'total_android_recruiter'  => $total_android_recruiter,
             'total_web_recruiter'      => $total_web_recruiter,
         ];
+    }
+
+    public function getUserVideos(): array
+    {
+        return ProfileUpdate::selectRaw('user.id, user.first_name, user.last_name, user.num, user_videos.link')
+            ->join('user', 'user.id', 'profile_updates.user_id')
+            ->join('user_videos', 'user_videos.user_id', 'profile_updates.user_id')
+            ->where([
+                'profile_updates.headline' => 1,
+                'profile_updates.proffessional' => 1,
+                'profile_updates.profile' => 1,
+                'profile_updates.qualification' => 1,
+                'profile_updates.video' => 1,
+                'user.verified' => 1,
+            ])->orderBy('user_videos.id', 'desc')->get()->toArray();
     }
 }

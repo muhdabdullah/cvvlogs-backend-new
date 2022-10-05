@@ -38,12 +38,20 @@ class DashboardController extends BaseApiController
     }
 
     /**
-     * @param Request $request
      * @return JsonResponse
      */
-    public function getStats(Request $request): JsonResponse
+    public function getStats(): JsonResponse
     {
-        $data = $this->jobRepository->getStats($request->only(['admin_status']));
+        $data = $this->jobRepository->getStats();
+        return $this->sendResponse($data, __('response.success'));
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function getUserVideos(): JsonResponse
+    {
+        $data = $this->jobRepository->getUserVideos();
         return $this->sendResponse($data, __('response.success'));
     }
 }

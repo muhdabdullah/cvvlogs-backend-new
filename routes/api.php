@@ -22,6 +22,7 @@ Route::group(['prefix' => '/api.v.1/admin'], function () {
 Route::group(['prefix' => '/api.v.1/admin', 'middleware' => ['permission']], function () {
     Route::post('get-job-list', [DashboardController::class, 'getAllJobs'])->name('admin.getAllJobs');
     Route::get('get-stats', [DashboardController::class, 'getStats'])->name('admin.getStats');
+    Route::get('get-user-videos', [DashboardController::class, 'getUserVideos'])->name('admin.getUserVideos');
 });
 
 Route::group(['prefix' => '/api.v.2/recruiter', 'middleware' => ['checkAuth']], function () {

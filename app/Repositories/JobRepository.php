@@ -6,6 +6,7 @@ use App\Models\Job;
 use App\Models\ProfileUpdate;
 use App\Models\Recruiter;
 use App\Models\User;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Validator\Exceptions\ValidatorException as ValidatorExceptionAlias;
@@ -69,6 +70,36 @@ class JobRepository extends BaseRepository
                 'user.verified' => 1,
             ])
             ->first()->total_complete_profiles;
+
+        $device_type_users = DB::select('SELECT device_type, COUNT(user_id) As user_count FROM (
+            SELECT user_session.* FROM `user`
+            JOIN user_session ON user_session.`user_id` = `user`.`id`
+            GROUP BY user_session.`user_id` ORDER BY user_session.`id` DESC) asd
+            GROUP BY device_type;');
+
+        foreach ($device_type_users as $device_type_user) {
+            if ($device_type_user->device_type == 'ios')
+                $total_ios_users = $device_type_user->user_count;
+            if ($device_type_user->device_type == 'android')
+                $total_android_users = $device_type_user->user_count;
+            if ($device_type_user->device_type == 'web')
+                $total_web_users = $device_type_user->user_count;
+        }
+
+        $device_type_recruiters = DB::select('SELECT device_type, COUNT(rec_id) As recruiter_count FROM (
+            SELECT recruiter_session.* FROM `recruiter`
+            JOIN recruiter_session ON recruiter_session.`rec_id` = `recruiter`.`id`
+            GROUP BY recruiter_session.`rec_id` ORDER BY recruiter_session.`id` DESC) asd
+            GROUP BY device_type;');
+
+        foreach ($device_type_recruiters as $device_type_recruiter) {
+            if ($device_type_recruiter->device_type == 'ios')
+                $total_ios_recruiter = $device_type_recruiter->recruiter_count;
+            if ($device_type_recruiter->device_type == 'android')
+                $total_android_recruiter = $device_type_recruiter->recruiter_count;
+            if ($device_type_recruiter->device_type == 'web')
+                $total_web_recruiter = $device_type_recruiter->recruiter_count;
+        }
 
         return [
             'total_users'              => $total_users,

@@ -11,7 +11,7 @@ use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
 
-class AuthController extends BaseApiController
+class AuthApiController extends BaseApiController
 {
     use AuthenticatesUsers;
 

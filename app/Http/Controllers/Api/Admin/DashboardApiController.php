@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\BaseApiController;
+use App\Http\Requests\Admin\UpdateUserVideoRequest;
 use App\Repositories\JobRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -10,7 +11,7 @@ use Illuminate\Http\Request;
 /**
  * Class Name DashboardController
  */
-class DashboardController extends BaseApiController
+class DashboardApiController extends BaseApiController
 {
     /**
      * @var JobRepository
@@ -53,5 +54,15 @@ class DashboardController extends BaseApiController
     {
         $data = $this->jobRepository->getUserVideos();
         return $this->sendResponse($data, __('response.success'));
+    }
+
+    /**
+     * @param UpdateUserVideoRequest $request
+     * @return JsonResponse
+     */
+    public function updateVideoStatus(UpdateUserVideoRequest $request): JsonResponse
+    {
+        $data = $this->jobRepository->updateVideoStatus($request->only(['id', 'status']));
+        return $this->sendResponse($data, __('response.update'));
     }
 }

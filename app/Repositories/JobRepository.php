@@ -6,10 +6,9 @@ use App\Models\Job;
 use App\Models\ProfileUpdate;
 use App\Models\Recruiter;
 use App\Models\User;
-use Illuminate\Support\Arr;
+use App\Models\UserVideo;
 use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Eloquent\BaseRepository;
-use Prettus\Validator\Exceptions\ValidatorException as ValidatorExceptionAlias;
 
 /**
  * Class SampleRepository
@@ -115,6 +114,9 @@ class JobRepository extends BaseRepository
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getUserVideos(): array
     {
         return ProfileUpdate::selectRaw('user.id, user.first_name, user.last_name, user.num, user_videos.link')
@@ -128,5 +130,16 @@ class JobRepository extends BaseRepository
                 'profile_updates.video' => 1,
                 'user.verified' => 1,
             ])->orderBy('user_videos.id', 'desc')->get()->toArray();
+    }
+
+    /**
+     * Update User's Uploaded Video Status To Approved Or Reject
+     *
+     * @param $request
+     * @return bool
+     */
+    public function updateVideoStatus($request): bool
+    {
+        return UserVideo::where('id', $request['id'])->update(['status' => $request['status']]);
     }
 }

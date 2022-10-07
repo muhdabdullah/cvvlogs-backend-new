@@ -120,6 +120,7 @@ class JobRepository extends BaseRepository
     public function getUserVideos(): array
     {
         return ProfileUpdate::selectRaw('user.id, user.first_name, user.last_name, user.num, user_videos.link')
+            ->selectRaw('IF(user_videos.status='.UserVideo::PENDING.', "'.UserVideo::StatusText[UserVideo::PENDING].'", IF(user_videos.status='.UserVideo::APPROVED.', "'.UserVideo::StatusText[UserVideo::APPROVED].'", IF(user_videos.status='.UserVideo::REJECTED.', "'.UserVideo::StatusText[UserVideo::REJECTED].'", ""))) As status')
             ->join('user', 'user.id', 'profile_updates.user_id')
             ->join('user_videos', 'user_videos.user_id', 'profile_updates.user_id')
             ->where([

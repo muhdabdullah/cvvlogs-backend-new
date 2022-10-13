@@ -18,5 +18,4 @@ jobs:
           cp /var/www/html/.env /var/www/html/cvvlogs-backend-new
           git pull origin master
           git status
-          composer install --no-interaction --prefer-dist --optimize-autoloader
           sudo chmod 777 storage/

@@ -1,3 +1,4 @@
+#CI/CD
 name: remote ssh command
 on: [push]
 jobs:

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\BaseApiController;
+use App\Http\Requests\Admin\DashboardStatsRequest;
 use App\Http\Requests\Admin\UpdateUserVideoRequest;
 use App\Repositories\JobRepository;
 use Illuminate\Http\JsonResponse;
@@ -39,11 +40,12 @@ class DashboardApiController extends BaseApiController
     }
 
     /**
+     * @param DashboardStatsRequest $request
      * @return JsonResponse
      */
-    public function getStats(): JsonResponse
+    public function getStats(DashboardStatsRequest $request): JsonResponse
     {
-        $data = $this->jobRepository->getStats();
+        $data = $this->jobRepository->getStats($request->only(['start_date', 'end_date']));
         return $this->sendResponse($data, __('response.success'));
     }
 

@@ -7,6 +7,7 @@ use App\Models\ProfileUpdate;
 use App\Models\Recruiter;
 use App\Models\User;
 use App\Models\UserVideo;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Prettus\Repository\Eloquent\BaseRepository;
 
@@ -41,21 +42,38 @@ class JobRepository extends BaseRepository
     }
 
     /**
+     * @param $request
      * @return array
      */
-    public function getStats(): array
+    public function getStats($request): array
     {
+        $start_date = isset($request['start_date'])? Carbon::parse($request['start_date'])->format('Y-m-d') :'';
+        $end_date = isset($request['end_date'])? Carbon::parse($request['end_date'])->format('Y-m-d') :'';
+
         $total_users = $total_verified_users = $total_ios_users = $total_android_users =  $total_web_users =
         $total_recruiter = $total_verified_recruiter = $total_ios_recruiter = $total_android_recruiter =
         $total_web_recruiter = $total_complete_profiles = 0;
 
-        $total_users = User::selectRaw('count(id) As total_users')->first()->total_users;
-        $total_verified_users = User::selectRaw('count(id) As total_verified_users')->where('verified', 1)->first()
+        $total_users = User::selectRaw('count(id) As total_users')
+            ->when($start_date !== '', function ($where) use ($start_date, $end_date){
+                $where->whereRaw('date(`user`.created_at) BETWEEN "' . $start_date . '" AND "' . $end_date.'"');
+            })->first()->total_users;
+
+        $total_verified_users = User::selectRaw('count(id) As total_verified_users')->where('verified', 1)
+            ->when($start_date !== '', function ($where) use ($start_date, $end_date){
+                $where->whereRaw('date(user.created_at) BETWEEN "' . $start_date . '" AND "' . $end_date.'"');
+            })->first()
             ->total_verified_users;
 
-        $total_recruiter = Recruiter::selectRaw('count(id) As total_recruiter')->first()->total_recruiter;
-        $total_verified_recruiter = Recruiter::selectRaw('count(id) As total_verified_recruiter')->where('verified', 1)->first()
-            ->total_verified_recruiter;
+        $total_recruiter = Recruiter::selectRaw('count(id) As total_recruiter')
+            ->when($start_date !== '', function ($where) use ($start_date, $end_date){
+                $where->whereRaw('date(recruiter.created_at) BETWEEN "' . $start_date . '" AND "' . $end_date.'"');
+            })->first()->total_recruiter;
+        $total_verified_recruiter = Recruiter::selectRaw('count(id) As total_verified_recruiter')->where('verified', 1)
+            ->when($start_date !== '', function ($where) use ($start_date, $end_date){
+                $where->whereRaw('date(recruiter.created_at) BETWEEN "' . $start_date . '" AND "' . $end_date.'"');
+            })
+            ->first()->total_verified_recruiter;
 
         $total_complete_profiles = ProfileUpdate::selectRaw('count(user.id) As total_complete_profiles')
             ->join('user', 'user.id', 'profile_updates.user_id')
@@ -67,11 +85,20 @@ class JobRepository extends BaseRepository
                 'profile_updates.video' => 1,
                 'user.verified' => 1,
             ])
+            ->when($start_date !== '', function ($where) use ($start_date, $end_date){
+                $where->whereRaw('date(user.created_at) BETWEEN "' . $start_date . '" AND "' . $end_date.'"');
+            })
             ->first()->total_complete_profiles;
+
+        if ($start_date !== '') {
+            $userWhereRaw = 'WHERE date(`user`.created_at) BETWEEN "'.$start_date.'" AND "'.$end_date.'"';
+            $recruiterWhereRaw = 'WHERE date(`recruiter`.created_at) BETWEEN "'.$start_date.'" AND "'.$end_date.'"';
+        } else
+            $userWhereRaw = $recruiterWhereRaw = '';
 
         $device_type_users = DB::select('SELECT device_type, COUNT(user_id) As user_count FROM (
             SELECT user_session.* FROM `user`
-            JOIN user_session ON user_session.`user_id` = `user`.`id`
+            JOIN user_session ON user_session.`user_id` = `user`.`id` '.$userWhereRaw.'
             GROUP BY user_session.`user_id` ORDER BY user_session.`id` DESC) asd
             GROUP BY device_type;');
 
@@ -86,7 +113,7 @@ class JobRepository extends BaseRepository
 
         $device_type_recruiters = DB::select('SELECT device_type, COUNT(rec_id) As recruiter_count FROM (
             SELECT recruiter_session.* FROM `recruiter`
-            JOIN recruiter_session ON recruiter_session.`rec_id` = `recruiter`.`id`
+            JOIN recruiter_session ON recruiter_session.`rec_id` = `recruiter`.`id` '.$recruiterWhereRaw.'
             GROUP BY recruiter_session.`rec_id` ORDER BY recruiter_session.`id` DESC) asd
             GROUP BY device_type;');
 

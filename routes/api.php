@@ -22,6 +22,7 @@ Route::group(['prefix' => '/api.v.1/admin'], function () {
 Route::group(['prefix' => '/api.v.1/admin', 'middleware' => ['permission']], function () {
     Route::get('get-job-list', [DashboardApiController::class, 'getAllJobs'])->name('admin.getAllJobs');
     Route::get('get-stats', [DashboardApiController::class, 'getStats'])->name('admin.getStats');
+    Route::get('get-monthly-stats', [DashboardApiController::class, 'getMonthlyStats'])->name('admin.getStats');
     Route::get('get-user-videos', [DashboardApiController::class, 'getUserVideos'])->name('admin.getUserVideos');
     Route::put('update-video-status', [DashboardApiController::class, 'updateVideoStatus'])->name('admin.updateVideoStatus');
 });

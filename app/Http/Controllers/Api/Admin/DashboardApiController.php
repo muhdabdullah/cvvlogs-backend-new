@@ -67,4 +67,14 @@ class DashboardApiController extends BaseApiController
         $data = $this->jobRepository->updateVideoStatus($request->only(['id', 'status']));
         return $this->sendResponse($data, __('response.update'));
     }
+
+    /**
+     * @param DashboardStatsRequest $request
+     * @return JsonResponse
+     */
+    public function getMonthlyStats(DashboardStatsRequest $request): JsonResponse
+    {
+        $data = $this->jobRepository->getMonthlyStats($request->only(['start_date', 'end_date']));
+        return $this->sendResponse($data, __('response.success'));
+    }
 }

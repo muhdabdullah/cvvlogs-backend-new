@@ -11,7 +11,7 @@ class Recruiter extends Model
     use HasFactory;
     protected $table = 'recruiter';
 
-    protected $visible = ['id', 'name', 'company'];
+    protected $visible = [];
 
     protected $with = ['company'];
 

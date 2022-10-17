@@ -170,4 +170,93 @@ class JobRepository extends BaseRepository
     {
         return UserVideo::where('id', $request['id'])->update(['status' => $request['status']]);
     }
+
+    /**
+     * @param $request
+     * @return array
+     */
+    public function getMonthlyStats($request): array
+    {
+        $start_date = isset($request['start_date'])? Carbon::parse($request['start_date'])->format('Y-m-d') :'';
+        $end_date = isset($request['end_date'])? Carbon::parse($request['end_date'])->format('Y-m-d') :'';
+
+        $total_users = User::selectRaw('DATE(created_at) AS `date`')
+            ->selectRaw('MONTHNAME(created_at) AS `month`')
+            ->selectRaw('COUNT(id) AS total_users')
+            ->when($start_date !== '', function ($where) use ($start_date, $end_date){
+                $where->whereRaw('date(`user`.created_at) BETWEEN "' . $start_date . '" AND "' . $end_date.'"');
+            })
+            ->whereRaw("DATE(created_at) LIKE CONCAT_WS('', YEAR(NOW()), '-%')")
+            ->groupByRaw('MONTH(created_at)')
+            ->get()->toArray();
+
+        $total_verified_users = User::selectRaw('DATE(created_at) AS `date`')
+            ->selectRaw('MONTHNAME(created_at) AS `month`')
+            ->selectRaw('COUNT(id) AS total_verified_users')
+            ->when($start_date !== '', function ($where) use ($start_date, $end_date){
+                $where->whereRaw('date(`user`.created_at) BETWEEN "' . $start_date . '" AND "' . $end_date.'"');
+            })->where('verified', 1)
+            ->whereRaw("DATE(created_at) LIKE CONCAT_WS('', YEAR(NOW()), '-%')")
+            ->groupByRaw('MONTH(created_at)')
+            ->get()->toArray();
+
+        $total_recruiter = Recruiter::selectRaw('DATE(created_at) AS `date`')
+            ->selectRaw('MONTHNAME(created_at) AS `month`')
+            ->selectRaw('count(id) As total_recruiter')
+            ->when($start_date !== '', function ($where) use ($start_date, $end_date){
+                $where->whereRaw('date(recruiter.created_at) BETWEEN "' . $start_date . '" AND "' . $end_date.'"');
+            })
+            ->whereRaw("DATE(created_at) LIKE CONCAT_WS('', YEAR(NOW()), '-%')")
+            ->groupByRaw('MONTH(created_at)')
+            ->get()->toArray();
+
+        $total_verified_recruiter = Recruiter::selectRaw('DATE(created_at) AS `date`')
+            ->selectRaw('MONTHNAME(created_at) AS `month`')
+            ->selectRaw('count(id) As total_verified_recruiter')
+            ->when($start_date !== '', function ($where) use ($start_date, $end_date){
+                $where->whereRaw('date(recruiter.created_at) BETWEEN "' . $start_date . '" AND "' . $end_date.'"');
+            })->where('verified', 1)
+            ->whereRaw("DATE(created_at) LIKE CONCAT_WS('', YEAR(NOW()), '-%')")
+            ->groupByRaw('MONTH(created_at)')
+            ->get()->toArray();
+
+        $device_type_users = DB::select('SELECT month_number, `month`, device_type, COUNT(user_id) AS user_count FROM (
+            SELECT user_session.*, MONTH(user_session.created_at) AS month_number,
+        MONTHNAME(user_session.created_at) AS `month` FROM `user`
+            JOIN user_session ON user_session.`user_id` = `user`.`id`
+        WHERE DATE(user_session.created_at) LIKE CONCAT_WS("", YEAR(NOW()), "-%")
+        GROUP BY user_session.`user_id` ORDER BY user_session.`id` DESC) asd
+        GROUP BY `month`, device_type  ORDER BY month_number ASC;');
+
+        $total_device_type_users=[];
+        foreach ($device_type_users as $device_type_user) {
+            $total_device_type_users[$device_type_user->month][] = [
+                $device_type_user->device_type => $device_type_user->user_count
+            ];
+        }
+
+        $device_type_recruiters = DB::select('SELECT month_number, `month`, device_type, COUNT(rec_id) AS recruiter_count FROM (
+            SELECT recruiter_session.*, MONTH(recruiter_session.created_at) AS month_number,
+        MONTHNAME(recruiter_session.created_at) AS `month` FROM `recruiter`
+            JOIN recruiter_session ON recruiter_session.`rec_id` = `recruiter`.`id`
+        WHERE DATE(recruiter_session.created_at) LIKE CONCAT_WS("", YEAR(NOW()), "-%")
+        GROUP BY recruiter_session.`rec_id` ORDER BY recruiter_session.`id` DESC) asd
+        GROUP BY `month`, device_type  ORDER BY month_number ASC;');
+
+        $total_device_type_recruiters=[];
+        foreach ($device_type_recruiters as $device_type_recruiter) {
+            $total_device_type_recruiters[$device_type_recruiter->month][] = [
+                $device_type_recruiter->device_type => $device_type_recruiter->recruiter_count
+            ];
+        }
+
+        return [
+            'total_users'                  => $total_users,
+            'total_verified_users'         => $total_verified_users,
+            'total_recruiter'              => $total_recruiter,
+            'total_verified_recruiter'     => $total_verified_recruiter,
+            'total_device_type_users'      => $total_device_type_users,
+            'total_device_type_recruiters' => $total_device_type_recruiters
+        ];
+    }
 }

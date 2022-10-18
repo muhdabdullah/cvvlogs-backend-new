@@ -220,11 +220,18 @@ class JobRepository extends BaseRepository
             ->groupByRaw('MONTH(created_at)')
             ->get()->toArray();
 
+        if ($start_date !== '') {
+            $userWhereRaw = 'AND date(`user`.created_at) BETWEEN "'.$start_date.'" AND "'.$end_date.'"';
+            $recruiterWhereRaw = 'AND date(`recruiter`.created_at) BETWEEN "'.$start_date.'" AND "'.$end_date.'"';
+        } else
+            $userWhereRaw = $recruiterWhereRaw = '';
+
         $device_type_users = DB::select('SELECT month_number, `month`, device_type, COUNT(user_id) AS user_count FROM (
             SELECT user_session.*, MONTH(user_session.created_at) AS month_number,
         MONTHNAME(user_session.created_at) AS `month` FROM `user`
             JOIN user_session ON user_session.`user_id` = `user`.`id`
         WHERE DATE(user_session.created_at) LIKE CONCAT_WS("", YEAR(NOW()), "-%")
+         '.$userWhereRaw.'
         GROUP BY user_session.`user_id` ORDER BY user_session.`id` DESC) asd
         GROUP BY `month`, device_type  ORDER BY month_number ASC;');
 
@@ -240,6 +247,7 @@ class JobRepository extends BaseRepository
         MONTHNAME(recruiter_session.created_at) AS `month` FROM `recruiter`
             JOIN recruiter_session ON recruiter_session.`rec_id` = `recruiter`.`id`
         WHERE DATE(recruiter_session.created_at) LIKE CONCAT_WS("", YEAR(NOW()), "-%")
+        '.$recruiterWhereRaw.'
         GROUP BY recruiter_session.`rec_id` ORDER BY recruiter_session.`id` DESC) asd
         GROUP BY `month`, device_type  ORDER BY month_number ASC;');
 

@@ -5,16 +5,7 @@ use App\Http\Controllers\Api\Admin\DashboardApiController;
 use App\Http\Controllers\Api\Recruiter\Sample;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+//testing cors
 Route::middleware(['cors'])->group(function () {
     Route::group(['prefix' => '/api.v.1/admin'], function () {
         Route::post('login', [AuthApiController::class, 'login'])->name('admin.login');

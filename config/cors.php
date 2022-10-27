@@ -17,7 +17,7 @@ return [
 
     'paths'                    => ['*', 'api/*'],
     'allowed_methods'          => ['*'],
-    'allowed_origins'          => ['*', 'http://dev.projectcamp.io/*'],
+    'allowed_origins'          => ['*', 'http://dev.projectcamp.io'],
     'allowed_origins_patterns' => [],
     'allowed_headers'          => ['*', '*'],
     'exposed_headers'          => [],

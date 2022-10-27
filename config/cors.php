@@ -15,12 +15,12 @@ return [
     |
     */
 
-    'paths'                    => ['api/*'],
+    'paths'                    => ['*'],
     'allowed_methods'          => ['*'],
-    'allowed_origins'          => ['*'],
+    'allowed_origins'          => ['http://dev.projectcamp.io'],
     'allowed_origins_patterns' => ['*'],
     'allowed_headers'          => ['*', '*'],
     'exposed_headers'          => [],
-    'max_age'                  => false,
+    'max_age'                  => 0,
     'supports_credentials'     => false,
 ];

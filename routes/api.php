@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::group(['prefix' => '/api.v.1/admin', 'middleware' => ['cors']], function () {
+Route::group(['prefix' => '/api.v.1/admin'], function () {
     Route::post('login', [AuthApiController::class, 'login'])->name('admin.login');
 });
 

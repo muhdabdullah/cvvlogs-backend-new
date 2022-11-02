@@ -31,13 +31,14 @@ class JobRepository extends BaseRepository
     public function getAllJobs($request): mixed
     {
         $admin_status = $request['admin_status'] ?? '';
-        return $this->model->select('id As job_id', 'recruiter_id', 'job_title')
+        $recordPerPage = $request['per_page'] ?? 15;
+        return $this->model->select('id As job_id', 'recruiter_id', 'job_title', 'city_id', 'country_id', 'is_admin_approved')
             ->where('is_admin_approved', $admin_status)->orderBy('created_at', 'desc')
             ->with([
                 'country:id,name',
                 'city:id,name',
                 'recruiter.company.industry:id,name'
-            ])->withCount('applications As total_applicants')->paginate(15);
+            ])->withCount('applications As total_applicants')->paginate($recordPerPage);
     }
 
     /**

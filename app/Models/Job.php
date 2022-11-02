@@ -35,7 +35,7 @@ class Job extends Model
      */
     public function getJobAdminStatusAttribute(): string
     {
-        return $this->is_admin_approved == 1 ? 'Approved' : 'Pending';
+        return self::StatusText[$this->is_admin_approved];
     }
 
     /**

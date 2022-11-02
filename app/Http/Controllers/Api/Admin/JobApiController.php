@@ -28,7 +28,7 @@ class JobApiController extends BaseApiController
      */
     public function getAllJobs(Request $request): JsonResponse
     {
-        $data = $this->jobRepo->getAllJobs($request->only(['admin_status']));
+        $data = $this->jobRepo->getAllJobs($request->only(['admin_status', 'per_page']));
         return $this->sendResponse($data, __('response.success'));
     }
 

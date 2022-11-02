@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,6 +11,21 @@ class Job extends Model
 {
     use HasFactory;
     protected $table = 'job';
+
+    const PENDING = 0;
+    const APPROVED = 1;
+    const REJECTED = 2;
+
+    const StatusText = [
+        self::PENDING  => 'Pending',
+        self::APPROVED => 'Approved',
+        self::REJECTED => 'Rejected'
+    ];
+
+    public static array $ApproveStatusRule = [
+        'id'     => 'required|exists:job,id',
+        'status' => 'required|in:' . self::APPROVED . ',' . self::REJECTED. ',' . self::PENDING
+    ];
 
     protected $appends = ['job_admin_status', 'ago'];
     protected $with = ['country', 'city', 'recruiter'];

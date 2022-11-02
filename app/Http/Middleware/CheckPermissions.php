@@ -4,19 +4,21 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Laravel\Passport\Http\Middleware\CheckForAnyScope as BaseMiddleware;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckPermissions extends BaseMiddleware
 {
     /**
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @param Closure $next
      * @param mixed ...$scopes
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response|mixed
+     * @return JsonResponse|\Illuminate\Http\Response|mixed
      * @throws AuthenticationException
      */
-    public function handle($request, $next, ...$scopes)
+    public function handle($request, $next, ...$scopes): mixed
     {
         $permission = $request->route()->getName();
 

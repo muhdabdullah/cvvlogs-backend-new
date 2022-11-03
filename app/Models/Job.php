@@ -23,11 +23,12 @@ class Job extends Model
     ];
 
     public static array $ApproveStatusRule = [
-        'id'     => 'required|exists:job,id',
-        'status' => 'required|in:' . self::APPROVED . ',' . self::REJECTED. ',' . self::PENDING
+        'id'     => 'required|array',
+        'id.*'   => 'exists:job,id',
+        'status' => 'required|in:' . self::APPROVED . ',' . self::REJECTED . ',' . self::PENDING
     ];
 
-    protected $appends = ['job_admin_status', 'ago'];
+    protected $appends = ['job_admin_status', 'ago', 'job_id'];
     protected $with = ['country', 'city', 'recruiter'];
 
     /**
@@ -36,6 +37,14 @@ class Job extends Model
     public function getJobAdminStatusAttribute(): string
     {
         return self::StatusText[$this->is_admin_approved];
+    }
+
+    /**
+     * @return int
+     */
+    public function getJobIdAttribute(): int
+    {
+        return $this->id;
     }
 
     /**

@@ -32,7 +32,7 @@ class JobRepository extends BaseRepository
     {
         $admin_status = $request['admin_status'] ?? '';
         $recordPerPage = $request['per_page'] ?? 15;
-        return $this->model->select('id As job_id', 'recruiter_id', 'job_title', 'city_id', 'country_id', 'is_admin_approved')
+        return $this->model
             ->where('is_admin_approved', $admin_status)->orderBy('created_at', 'desc')
             ->with([
                 'country:id,name',
@@ -246,6 +246,6 @@ class JobRepository extends BaseRepository
      */
     public function updateJobStatus($request): bool
     {
-        return Job::where('id', $request['id'])->update(['is_admin_approved' => $request['status']]);
+        return Job::whereIn('id', $request['id'])->update(['is_admin_approved' => $request['status']]);
     }
 }

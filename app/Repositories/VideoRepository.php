@@ -47,6 +47,6 @@ class VideoRepository extends BaseRepository
      */
     public function updateVideoStatus($request): bool
     {
-        return $this->model->where('id', $request['id'])->update(['status' => $request['status']]);
+        return $this->model->whereIn('id', $request['id'])->update(['status' => $request['status']]);
     }
 }

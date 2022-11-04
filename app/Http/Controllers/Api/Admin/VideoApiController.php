@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseApiController;
 use App\Http\Requests\Admin\UpdateUserVideoRequest;
 use App\Repositories\VideoRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class VideoApiController extends BaseApiController
 {
@@ -20,11 +21,12 @@ class VideoApiController extends BaseApiController
     }
 
     /**
+     * @param Request $request
      * @return JsonResponse
      */
-    public function getUserVideos(): JsonResponse
+    public function getUserVideos(Request $request): JsonResponse
     {
-        $data = $this->videoRepo->getUserVideos();
+        $data = $this->videoRepo->getUserVideos($request->only(['per_page', 'status']));
         return $this->sendResponse($data, __('response.success'));
     }
 

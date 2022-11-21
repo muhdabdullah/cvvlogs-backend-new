@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany as BelongsToManyAlias;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne as HasOneAlias;
 
@@ -22,6 +23,10 @@ class Job extends Model
         self::REJECTED => 'Rejected'
     ];
 
+    public static array $listingRule = [
+        'admin_status' => 'in:' . self::APPROVED . ',' . self::REJECTED . ',' . self::PENDING
+    ];
+
     public static array $ApproveStatusRule = [
         'id'     => 'required|array',
         'id.*'   => 'exists:job,id',
@@ -29,7 +34,7 @@ class Job extends Model
     ];
 
     protected $appends = ['job_admin_status', 'ago', 'job_id'];
-    protected $with = ['country', 'city', 'recruiter'];
+    protected $with = ['country', 'city', 'recruiter', 'industry', 'workLevel'];
 
     /**
      * @return string
@@ -85,5 +90,21 @@ class Job extends Model
     public function applications(): HasMany
     {
         return $this->hasMany(Application::class,'job_id','id');
+    }
+
+    /**
+     * @return BelongsToManyAlias
+     */
+    public function industry(): BelongsToManyAlias
+    {
+        return $this->belongsToMany(Industries::class,'job_industry', 'job_id','industry_id', 'id');
+    }
+
+    /**
+     * @return HasOneAlias
+     */
+    public function workLevel(): HasOneAlias
+    {
+        return $this->hasOne(WorkLevel::class,'id','work_level');
     }
 }

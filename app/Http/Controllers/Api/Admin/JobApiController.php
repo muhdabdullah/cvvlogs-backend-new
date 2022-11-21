@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Criteria\JobFilterCriteria;
 use App\Http\Controllers\BaseApiController;
+use App\Http\Requests\Admin\ListJobsRequest;
 use App\Http\Requests\Admin\UpdateJobStatusRequest;
 use App\Repositories\JobRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Prettus\Repository\Exceptions\RepositoryException;
 
 class JobApiController extends BaseApiController
 {
@@ -23,12 +25,13 @@ class JobApiController extends BaseApiController
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * @param ListJobsRequest $request
      * @return JsonResponse
+     * @throws RepositoryException
      */
-    public function getAllJobs(Request $request): JsonResponse
+    public function getAllJobs(ListJobsRequest $request): JsonResponse
     {
-        $data = $this->jobRepo->getAllJobs($request->only(['admin_status', 'per_page']));
+        $data = $this->jobRepo->resetCriteria()->pushCriteria(new JobFilterCriteria($request))->paginate($request->limit);
         return $this->sendResponse($data, __('response.success'));
     }
 

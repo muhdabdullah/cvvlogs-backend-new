@@ -33,7 +33,7 @@ class Job extends Model
         'status' => 'required|in:' . self::APPROVED . ',' . self::REJECTED . ',' . self::PENDING
     ];
 
-    protected $appends = ['job_admin_status', 'ago', 'job_id'];
+    protected $appends = ['job_admin_status', 'ago', 'job_id', 'is_fav'];
     protected $with = ['country', 'city', 'recruiter', 'industry', 'workLevel'];
 
     /**
@@ -50,6 +50,17 @@ class Job extends Model
     public function getJobIdAttribute(): int
     {
         return $this->id;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsFavAttribute(): bool
+    {
+        $is_fav = false;
+        if (auth()->guard('api')->user())
+            $is_fav = $this->favJobs()->wherePivot('user_id', auth()->guard('api')->user()->id)->count() > 0;
+        return $is_fav;
     }
 
     /**
@@ -106,5 +117,13 @@ class Job extends Model
     public function workLevel(): HasOneAlias
     {
         return $this->hasOne(WorkLevel::class,'id','work_level');
+    }
+
+    /**
+     * @return BelongsToManyAlias
+     */
+    public function favJobs(): BelongsToManyAlias
+    {
+        return $this->belongsToMany(User::class, 'user_fav_jobs', 'job_id', 'user_id', 'id');
     }
 }

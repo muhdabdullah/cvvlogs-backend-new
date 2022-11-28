@@ -64,6 +64,11 @@ class JobFilterCriteria implements CriteriaInterface
             return $query->where('is_admin_approved', $admin_status);
         });
 
+        $featured = $this->request->get("featured", '');
+        $model = $model->when(($featured != ''), function ($query) use ($featured) {
+            return $query->where('is_featured', $featured);
+        });
+
         $min_salary = $this->request->get("min_salary", '');
         $model = $model->when(($min_salary != ''), function ($query) use ($min_salary) {
             return $query->where('salary_min', '<', $min_salary);

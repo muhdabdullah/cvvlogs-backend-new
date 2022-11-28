@@ -7,6 +7,7 @@ use App\Http\Controllers\BaseApiController;
 use App\Http\Requests\Admin\ListJobsRequest;
 use App\Http\Requests\Admin\UpdateJobStatusRequest;
 use App\Repositories\JobRepository;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Http\JsonResponse;
 use Prettus\Repository\Exceptions\RepositoryException;
 
@@ -43,5 +44,11 @@ class JobApiController extends BaseApiController
     {
         $data = $this->jobRepo->updateJobStatus($request->only(['id', 'status']));
         return $this->sendResponse($data, __('response.update'));
+    }
+
+    #[NoReturn] public function fetchJobs()
+    {
+        $response = Http::get('https://www.recruitwell.com/wp-content/uploads/doccafe.xml');
+        dd($response->body());
     }
 }

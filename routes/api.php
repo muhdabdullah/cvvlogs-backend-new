@@ -21,8 +21,6 @@ Route::group(['prefix' => '/api.v.1/admin'], function () {
     Route::post('login', [AuthApiController::class, 'login'])->name('admin.login');
 });
 
-Route::get('fetch-job-api', [JobApiController::class, 'fetchJobs'])->name('admin.fetchJobs');
-
 Route::group(['prefix' => '/api.v.1/admin', 'middleware' => ['permission']], function () {
     Route::get('get-stats', [DashboardApiController::class, 'getStats'])->name('admin.getStats');
     Route::get('get-monthly-stats', [DashboardApiController::class, 'getMonthlyStats'])->name('admin.getStats');
@@ -32,6 +30,9 @@ Route::group(['prefix' => '/api.v.1/admin', 'middleware' => ['permission']], fun
 
     Route::get('get-user-videos', [VideoApiController::class, 'getUserVideos'])->name('admin.getUserVideos');
     Route::put('update-video-status', [VideoApiController::class, 'updateVideoStatus'])->name('admin.updateVideoStatus');
+
+    Route::get('fetch-job-api', [JobApiController::class, 'fetchJobs']);
+    Route::get('mark-job-application/{id}', [JobApiController::class, 'markJobApplication']);
 });
 
 Route::group(['prefix' => '/api.v.2/recruiter', 'middleware' => ['checkAuth']], function () {

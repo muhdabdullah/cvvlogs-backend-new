@@ -13,6 +13,7 @@
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.0",
+        "orchestra/parser": "^7.0",
         "prettus/l5-repository": "^2.8"
     },
     "require-dev": {

@@ -1,22 +1,29 @@
-#CI/CD
-name: remote ssh command
-on: [push]
-jobs:
+name: Node CI
 
+on: [push]
+
+jobs:
   build:
-    name: Build
+
     runs-on: ubuntu-latest
+
     steps:
-    - name: executing remote ssh commands using ssh key
-      uses: appleboy/ssh-action@master
+    - uses: actions/checkout@v1
+    - name: Install Node.js
+      uses: actions/setup-node@v1
       with:
-        host: 3.19.246.147
-        username: ubuntu
-        key: ${{ secrets.OMG_SECRET }}
-        port: 22
-        script: |
-          cd /var/www/html/cvvlogs-backend-new
-          cp /var/www/html/.env /var/www/html/cvvlogs-backend-new
-          git pull origin master
-          git status
-          sudo chmod 777 storage/
+        node-version: '10.x'
+    - name: Install npm dependencies
+      run: npm install
+    - name: Run build task
+      run: npm run build --if-present
+    - name: Deploy to Server
+      uses: easingthemes/ssh-deploy@main
+      env:
+          SSH_PRIVATE_KEY: ${{ secrets.OMG_SECRET }}
+          ARGS: "-rltgoDzvO --delete"
+          SOURCE: "dist/"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
+          EXCLUDE: "/dist/, /node_modules/"

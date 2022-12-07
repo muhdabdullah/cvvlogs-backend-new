@@ -31,7 +31,6 @@ Route::group(['prefix' => '/api.v.1/admin', 'middleware' => ['permission']], fun
     Route::get('get-user-videos', [VideoApiController::class, 'getUserVideos'])->name('admin.getUserVideos');
     Route::put('update-video-status', [VideoApiController::class, 'updateVideoStatus'])->name('admin.updateVideoStatus');
 
-    Route::get('fetch-job-api', [JobApiController::class, 'fetchJobs']);
     Route::get('mark-job-application/{id}', [JobApiController::class, 'markJobApplication']);
 });
 

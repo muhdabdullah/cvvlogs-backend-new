@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\City;
+use App\Models\Industries;
+use App\Models\Job;
 use App\Models\Recruiter;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +38,7 @@ class ImportJobs extends Command
         foreach ($xml->getContent() as $xml) {
             $jobs[] = $this->simplexml2array($xml);
         }
+
         $recruiter = Recruiter::where('email', 'alamb@recruitwell.com')->value('id');
         if (!$recruiter) {
             $recruiter = DB::table('recruiter')->insertGetId([
@@ -50,6 +53,16 @@ class ImportJobs extends Command
                 'deleted' => 0,
             ]);
         }
+
+        $industry = Industries::where('name', 'Hospital & Health Care')->value('id');
+        if (!$industry) {
+            $industry = DB::table('allindustries')->insertGetId([
+                'name' => 'Hospital & Health Care',
+                'parent_id' => 0,
+                'status' => 1
+            ]);
+        }
+
         foreach ($jobs as $job) {
             $city = City::where('name', $job['city'])->first();
             if ($city) {
@@ -76,6 +89,28 @@ class ImportJobs extends Command
                     'job_type' => 'recruitwell',
                 ];
                 DB::table('job')->updateOrInsert(['external_id' => $job['jobnumber']], $jobData);
+
+                $sub_industry = Industries::where('name', $job['specialty'])->value('id');
+                if (!$sub_industry) {
+                    $sub_industry = DB::table('allindustries')->insertGetId([
+                        'name' => $job['specialty'],
+                        'parent_id' => $industry,
+                        'status' => 1
+                    ]);
+                }
+
+                $jobId = Job::where('external_id', $job['jobnumber'])->value('id');
+
+                if ($jobId && $industry && $sub_industry) {
+                    DB::table('job_industry')->insert([
+                        'job_id' => $jobId,
+                        'industry_id' => $industry,
+                    ]);
+                    DB::table('job_industry')->insert([
+                        'job_id' => $jobId,
+                        'industry_id' => $sub_industry,
+                    ]);
+                }
             }
         }
 

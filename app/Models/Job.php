@@ -58,8 +58,8 @@ class Job extends Model
     public function getIsFavAttribute(): bool
     {
         $is_fav = false;
-        if (auth()->guard('api')->user())
-            $is_fav = $this->favJobs()->wherePivot('user_id', auth()->guard('api')->user()->id)->count() > 0;
+        /*if (auth()->guard('api')->user())
+            $is_fav = $this->favJobs()->wherePivot('user_id', auth()->guard('api')->user()->id)->count() > 0;*/
         return $is_fav;
     }
 

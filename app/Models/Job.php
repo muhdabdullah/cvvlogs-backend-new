@@ -34,7 +34,7 @@ class Job extends Model
     ];
 
     protected $appends = ['job_admin_status', 'ago', 'job_id', 'is_fav'];
-    protected $with = ['country', 'city', 'recruiter', 'industry', 'workLevel'];
+    protected $with = ['country', 'state', 'city', 'recruiter', 'industry', 'workLevel', 'experience', 'functional_area'];
 
     /**
      * @return string
@@ -77,6 +77,14 @@ class Job extends Model
     public function country(): HasOneAlias
     {
         return $this->hasOne(Country::class,'id','country_id');
+    }
+
+    /**
+     * @return HasOneAlias
+     */
+    public function state(): HasOneAlias
+    {
+        return $this->hasOne(State::class,'id','state_id');
     }
 
     /**
@@ -125,5 +133,18 @@ class Job extends Model
     public function favJobs(): BelongsToManyAlias
     {
         return $this->belongsToMany(User::class, 'user_fav_jobs', 'job_id', 'user_id', 'id');
+    }
+
+    /**
+     * @return HasOneAlias
+     */
+    public function experience(): HasOneAlias
+    {
+        return $this->hasOne(Experience::class,'id','experience_req');
+    }
+
+    public function functional_area()
+    {
+        return $this->belongsToMany(FunctionalArea::class,'job_functionalarea', 'job_id','func_id');
     }
 }

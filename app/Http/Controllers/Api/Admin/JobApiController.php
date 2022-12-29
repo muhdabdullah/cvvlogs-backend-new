@@ -40,6 +40,28 @@ class JobApiController extends BaseApiController
     public function getAllJobs(ListJobsRequest $request): JsonResponse
     {
         $data = $this->jobRepo->resetCriteria()->pushCriteria(new JobFilterCriteria($request))->paginate($request->limit);
+
+        $date = strtotime(date("Y-m-d h:i:sa"));
+
+        foreach ($data as $datum) {
+            $datum->description = $datum->job_description;
+            $datum->rec = @$datum->recruiter->company_name;
+            $datum->exp = @$datum->experience->name;
+            $datum->country = @$datum->country->name;
+            $datum->state = @$datum->state->name;
+            $datum->city = @$datum->city->name;
+            $datum->func = @$datum->functional_area[0]->name;
+
+
+            $start = strtotime($datum->created_at);
+            $datediff = $date - $start;
+            $ago = round($datediff / (60 * 60 * 24));
+            if($ago == 0)
+                $datum->ago = "few hours";
+            else
+                $datum->ago = $ago.' days';
+        }
+
         return $this->sendResponse($data, __('response.success'));
     }
 

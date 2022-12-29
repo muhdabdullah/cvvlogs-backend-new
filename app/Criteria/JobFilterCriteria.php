@@ -82,9 +82,13 @@ class JobFilterCriteria implements CriteriaInterface
         return $model->orderBy('created_at', 'desc')
             ->with([
                 'country:id,name',
+                'state:id,name',
                 'city:id,name',
                 'industry:id,name',
                 'workLevel:id,name',
+                'experience:id,name',
+                'functional_area:id,name',
+                'recruiter:id,name,email,num,company_name',
                 'recruiter.company.industry:id,name'
             ])->withCount('applications As total_applicants');
     }

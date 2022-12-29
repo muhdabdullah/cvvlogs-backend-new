@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::get('get-job-list', [JobApiController::class, 'getAllJobs'])->name('admin.getAllJobs');
+
 Route::group(['prefix' => '/api.v.1/admin'], function () {
     Route::post('login', [AuthApiController::class, 'login'])->name('admin.login');
 });
@@ -25,7 +28,6 @@ Route::group(['prefix' => '/api.v.1/admin', 'middleware' => ['permission']], fun
     Route::get('get-stats', [DashboardApiController::class, 'getStats'])->name('admin.getStats');
     Route::get('get-monthly-stats', [DashboardApiController::class, 'getMonthlyStats'])->name('admin.getStats');
 
-    Route::get('get-job-list', [JobApiController::class, 'getAllJobs'])->name('admin.getAllJobs');
     Route::put('update-job-approve-status', [JobApiController::class, 'updateJobApproveStatus'])->name('admin.updateJobApproveStatus');
 
     Route::get('get-user-videos', [VideoApiController::class, 'getUserVideos'])->name('admin.getUserVideos');

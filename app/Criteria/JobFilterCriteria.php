@@ -71,7 +71,7 @@ class JobFilterCriteria implements CriteriaInterface
 
         $min_salary = $this->request->get("min_salary", '');
         $model = $model->when(($min_salary != ''), function ($query) use ($min_salary) {
-            return $query->where('salary_min', '<', $min_salary);
+            return $query->where('salary_min', '>', $min_salary);
         });
 
         $max_salary = $this->request->get("max_salary", '');

@@ -43,6 +43,11 @@ class JobFilterCriteria implements CriteriaInterface
             return $query->whereIn('country_id', $country_id);
         });
 
+        $state_id = $this->request->get("state_id", []);
+        $model = $model->when(($state_id != []), function ($query) use ($state_id) {
+            return $query->whereIn('state_id', $state_id);
+        });
+
         $city_id = $this->request->get("city_id", []);
         $model = $model->when(($city_id != []), function ($query) use ($city_id) {
             return $query->whereIn('city_id', $city_id);
@@ -88,6 +93,7 @@ class JobFilterCriteria implements CriteriaInterface
                 'workLevel:id,name',
                 'experience:id,name',
                 'functional_area:id,name',
+                'skill:id,name',
                 'recruiter:id,name,email,num,company_name',
                 'recruiter.company.industry:id,name'
             ])->withCount('applications As total_applicants');

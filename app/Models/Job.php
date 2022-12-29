@@ -34,7 +34,7 @@ class Job extends Model
     ];
 
     protected $appends = ['job_admin_status', 'ago', 'job_id', 'is_fav'];
-    protected $with = ['country', 'state', 'city', 'recruiter', 'industry', 'workLevel', 'experience', 'functional_area'];
+    protected $with = ['country', 'state', 'city', 'recruiter', 'industry', 'workLevel', 'experience', 'functional_area', 'skill'];
 
     /**
      * @return string
@@ -143,8 +143,19 @@ class Job extends Model
         return $this->hasOne(Experience::class,'id','experience_req');
     }
 
+    /**
+     * @return BelongsToManyAlias
+     */
     public function functional_area()
     {
         return $this->belongsToMany(FunctionalArea::class,'job_functionalarea', 'job_id','func_id');
+    }
+
+    /**
+     * @return BelongsToManyAlias
+     */
+    public function skill()
+    {
+        return $this->belongsToMany(Skill::class,'job_skills', 'job_id','skill_id');
     }
 }

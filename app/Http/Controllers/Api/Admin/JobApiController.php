@@ -44,6 +44,7 @@ class JobApiController extends BaseApiController
         $date = strtotime(date("Y-m-d h:i:sa"));
 
         foreach ($data as $datum) {
+            $datum->title = $datum->job_title;
             $datum->description = $datum->job_description;
             $datum->rec = @$datum->recruiter->company_name;
             $datum->exp = @$datum->experience->name;

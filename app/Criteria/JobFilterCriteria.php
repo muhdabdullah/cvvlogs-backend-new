@@ -2,6 +2,7 @@
 
 namespace App\Criteria;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Prettus\Repository\Contracts\CriteriaInterface;
 use Prettus\Repository\Contracts\RepositoryInterface;
@@ -33,6 +34,16 @@ class JobFilterCriteria implements CriteriaInterface
      */
     public function apply($model, RepositoryInterface $repository): mixed
     {
+        $userId = $this->request->get("user_id", false);
+        if ($userId > 0) {
+            $userCountry = User::where('id', $userId)->value('country');
+            if ($userCountry > 0) {
+                $model = $model->when(($userCountry != ''), function ($query) use ($userCountry) {
+                    return $query->where('country_id', $userCountry);
+                });
+            }
+        }
+
         $keyword = $this->request->get("keyword", '');
         $model = $model->when(($keyword != ''), function ($query) use ($keyword) {
             return $query->where('job_title', 'LIKE', '%' . $keyword . '%');

@@ -18,7 +18,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 Route::get('get-job-list', [JobApiController::class, 'getAllJobs'])->name('admin.getAllJobs');
+Route::post('mark-unmark-job-fav', [JobApiController::class, 'markUnmarkJobFav'])->name('admin.jobFav');
+
 
 Route::group(['prefix' => '/api.v.1/admin'], function () {
     Route::post('login', [AuthApiController::class, 'login'])->name('admin.login');

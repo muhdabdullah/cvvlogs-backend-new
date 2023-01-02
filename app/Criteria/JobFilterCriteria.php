@@ -84,7 +84,12 @@ class JobFilterCriteria implements CriteriaInterface
             return $query->where('salary_max', '<', $max_salary);
         });
 
-        return $model->orderBy('created_at', 'desc')
+        $is_fav = $this->request->get("is_fav", '');
+        $model = $model->when(in_array($is_fav, [1]), function ($query) use ($is_fav) {
+            return $query->join('user_fav_jobs', 'user_fav_jobs.job_id', 'job.id');
+        });
+
+        return $model->select('job.*')->orderBy('created_at', 'desc')
             ->with([
                 'country:id,name',
                 'state:id,name',

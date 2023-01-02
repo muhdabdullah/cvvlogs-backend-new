@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Criteria\JobFilterCriteria;
 use App\Http\Controllers\BaseApiController;
 use App\Http\Requests\Admin\ListJobsRequest;
+use App\Http\Requests\Admin\MarkUnMarkJobFavRequest;
 use App\Http\Requests\Admin\UpdateJobStatusRequest;
 use App\Models\Application;
 use App\Models\City;
@@ -64,6 +65,16 @@ class JobApiController extends BaseApiController
         }
 
         return $this->sendResponse($data, __('response.success'));
+    }
+
+    public function markUnmarkJobFav(MarkUnMarkJobFavRequest $request)
+    {
+        if ($request->is_fav == 1) {
+            DB::table('user_fav_jobs')->updateOrInsert(['job_id' => $request->job_id, 'user_id' => $request->user_id],['job_id' => $request->job_id, 'user_id' => $request->user_id]);
+        } else {
+            DB::table('user_fav_jobs')->where(['job_id' => $request->job_id, 'user_id' => $request->user_id])->delete();
+        }
+        return $this->sendResponse([], __('response.success'));
     }
 
     /**

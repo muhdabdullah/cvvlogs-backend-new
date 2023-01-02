@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('job', function (Blueprint $table) {
-            $table->float('salary_min')->default(0)->nullable()->change();
-            $table->float('salary_max')->default(0)->nullable()->change();
+            /*$table->float('salary_min')->default(0)->nullable()->change();
+            $table->float('salary_max')->default(0)->nullable()->change();*/
         });
     }
 

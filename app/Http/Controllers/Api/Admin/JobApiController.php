@@ -64,6 +64,13 @@ class JobApiController extends BaseApiController
                 $datum->ago = $ago.' days';
         }
 
+        if (isset($request->user_id) && $request->keyword) {
+            $where = ['user_id' => $request->user_id, 'keyword' => $request->keyword];
+            DB::table('user_search_logs')->updateOrInsert($where,[
+                'user_id' => $request->user_id, 'keyword' => $request->keyword, 'count' => 1
+            ]);
+        }
+
         return $this->sendResponse($data, __('response.success'));
     }
 

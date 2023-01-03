@@ -48,3 +48,5 @@ Route::group(['prefix' => '/api.v.1/user', 'middleware' => ['checkAuth']], funct
         dd(\App\Models\User::all());
     })->name('users');
 });
+
+// Add new comment

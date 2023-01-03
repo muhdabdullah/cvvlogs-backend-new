@@ -22,7 +22,8 @@ class UserVideo extends Model
     ];
 
     public static $updateStatusRule = [
-        'id'     => 'required|exists:user_videos,id',
-        'status' => 'required|in:' . UserVideo::APPROVED . ',' . UserVideo::REJECTED. ',' . UserVideo::PENDING
+        'id'     => 'required|array',
+        'id.*'   => 'exists:user_videos,id',
+        'status' => 'required|in:' . UserVideo::APPROVED . ',' . UserVideo::REJECTED . ',' . UserVideo::PENDING
     ];
 }

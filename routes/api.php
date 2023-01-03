@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\Admin\AuthApiController;
 use App\Http\Controllers\Api\Admin\DashboardApiController;
+use App\Http\Controllers\Api\Admin\JobApiController;
+use App\Http\Controllers\Api\Admin\VideoApiController;
 use App\Http\Controllers\Api\Recruiter\Sample;
 use Illuminate\Support\Facades\Route;
 
@@ -15,16 +17,26 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+
+Route::get('get-job-list', [JobApiController::class, 'getAllJobs'])->name('admin.getAllJobs');
+Route::post('mark-unmark-job-fav', [JobApiController::class, 'markUnmarkJobFav'])->name('admin.jobFav');
+
+
 Route::group(['prefix' => '/api.v.1/admin'], function () {
     Route::post('login', [AuthApiController::class, 'login'])->name('admin.login');
 });
 
 Route::group(['prefix' => '/api.v.1/admin', 'middleware' => ['permission']], function () {
-    Route::get('get-job-list', [DashboardApiController::class, 'getAllJobs'])->name('admin.getAllJobs');
     Route::get('get-stats', [DashboardApiController::class, 'getStats'])->name('admin.getStats');
     Route::get('get-monthly-stats', [DashboardApiController::class, 'getMonthlyStats'])->name('admin.getStats');
-    Route::get('get-user-videos', [DashboardApiController::class, 'getUserVideos'])->name('admin.getUserVideos');
-    Route::put('update-video-status', [DashboardApiController::class, 'updateVideoStatus'])->name('admin.updateVideoStatus');
+
+    Route::put('update-job-approve-status', [JobApiController::class, 'updateJobApproveStatus'])->name('admin.updateJobApproveStatus');
+
+    Route::get('get-user-videos', [VideoApiController::class, 'getUserVideos'])->name('admin.getUserVideos');
+    Route::put('update-video-status', [VideoApiController::class, 'updateVideoStatus'])->name('admin.updateVideoStatus');
+
+    Route::get('mark-job-application/{id}', [JobApiController::class, 'markJobApplication']);
 });
 
 Route::group(['prefix' => '/api.v.2/recruiter', 'middleware' => ['checkAuth']], function () {

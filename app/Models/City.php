@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class City extends Model
 {
     use HasFactory;
-    protected $table = 'allcities';
+    protected $table = 'new_cou_cities';
 }

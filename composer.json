@@ -6,12 +6,15 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
-        "guzzlehttp/guzzle": "^7.2",
+        "ext-curl": "*",
+        "doctrine/dbal": "^3.5",
+        "guzzlehttp/guzzle": "^7.5",
         "laravel/framework": "^9.19",
-        "laravel/passport": "^11.2",
+        "laravel/passport": "^11.3",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.0",
+        "orchestra/parser": "^7.0",
         "prettus/l5-repository": "^2.8"
     },
     "require-dev": {

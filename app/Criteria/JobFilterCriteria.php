@@ -46,7 +46,12 @@ class JobFilterCriteria implements CriteriaInterface
 
         $keyword = $this->request->get("keyword", '');
         $model = $model->when(($keyword != ''), function ($query) use ($keyword) {
-            return $query->where('job_title', 'LIKE', '%' . $keyword . '%');
+            $keyword = str_replace(' ', '%" OR "%', $keyword);
+            return $query->where(function($q) use($keyword) {
+                $q->whereRaw('job_title LIKE "%'.$keyword.'%"');
+                //$q->orWhere('job_title', 'LIKE', '%' . $keyword);
+                //$q->orWhere('job_title', 'LIKE', $keyword . '%');
+            });
         });
 
         $country_id = $this->request->get("country_id", []);

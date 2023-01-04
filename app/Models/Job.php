@@ -33,7 +33,7 @@ class Job extends Model
         'status' => 'required|in:' . self::APPROVED . ',' . self::REJECTED . ',' . self::PENDING
     ];
 
-    protected $appends = ['job_admin_status', 'ago', 'job_id', 'is_fav'];
+    protected $appends = ['job_admin_status', 'ago', 'job_id'];
     protected $with = ['country', 'state', 'city', 'recruiter', 'industry', 'workLevel', 'experience', 'functional_area', 'skill'];
 
     /**
@@ -55,13 +55,13 @@ class Job extends Model
     /**
      * @return bool
      */
-    public function getIsFavAttribute(): bool
+    /*public function getIsFavAttribute(): bool
     {
         $is_fav = false;
         if (auth()->guard('api')->user())
             $is_fav = $this->favJobs()->wherePivot('user_id', auth()->guard('api')->user()->id)->count() > 0;
         return $is_fav;
-    }
+    }*/
 
     /**
      * @return string

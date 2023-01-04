@@ -54,6 +54,11 @@ class JobApiController extends BaseApiController
             $datum->city = @$datum->city->name;
             $datum->func = @$datum->functional_area[0]->name;
 
+            $is_fav = false;
+            if (isset($request->user_id)) {
+                $is_fav = $datum->favJobs()->wherePivot('user_id', $request->user_id)->count() > 0;
+            }
+            $datum->is_fav = $is_fav;
 
             $start = strtotime($datum->created_at);
             $datediff = $date - $start;

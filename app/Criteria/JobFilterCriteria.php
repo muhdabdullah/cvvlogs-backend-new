@@ -105,7 +105,10 @@ class JobFilterCriteria implements CriteriaInterface
             return $query->join('user_fav_jobs', 'user_fav_jobs.job_id', 'job.id');
         });
 
-        return $model->select('job.*')->orderBy('created_at', 'desc')
+        return $model->select('job.*')
+            ->where('job.status', 1)
+            ->where('job.deleted', 0)
+            ->orderBy('job.created_at', 'desc')
             ->with([
                 'country:id,name',
                 'state:id,name',

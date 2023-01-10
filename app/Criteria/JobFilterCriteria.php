@@ -37,11 +37,11 @@ class JobFilterCriteria implements CriteriaInterface
         $userId = $this->request->get("user_id", false);
         if ($userId > 0) {
             $userCountry = User::where('id', $userId)->value('country');
-            if ($userCountry > 0) {
+            /*if ($userCountry > 0) {
                 $model = $model->when(($userCountry != ''), function ($query) use ($userCountry) {
                     return $query->where('country_id', $userCountry);
                 });
-            }
+            }*/
         }
 
         $keyword = $this->request->get("keyword", '');
@@ -55,6 +55,9 @@ class JobFilterCriteria implements CriteriaInterface
         });
 
         $country_id = $this->request->get("country_id", []);
+        if ($userCountry > 0) {
+            $country_id[] = $userCountry;
+        }
         $model = $model->when(($country_id != []), function ($query) use ($country_id) {
             return $query->whereIn('country_id', $country_id);
         });

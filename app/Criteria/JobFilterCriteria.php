@@ -55,9 +55,9 @@ class JobFilterCriteria implements CriteriaInterface
         });
 
         $country_id = $this->request->get("country_id", []);
-        if ($userCountry > 0) {
+        /*if (isset($userCountry) && $userCountry > 0) {
             $country_id[] = $userCountry;
-        }
+        }*/
         $model = $model->when(($country_id != []), function ($query) use ($country_id) {
             return $query->whereIn('country_id', $country_id);
         });
